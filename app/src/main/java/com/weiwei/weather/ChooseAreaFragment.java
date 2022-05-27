@@ -2,6 +2,7 @@ package com.weiwei.weather;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,6 @@ public class ChooseAreaFragment extends Fragment {
     private List<County> countyList;
     private List<Province> provinceList;
     private Province selectedProvinced;
-    private County seletedCounty;
     private City selectedCity;
     private int currentlevel;
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savadInstancesState) {
@@ -57,7 +57,6 @@ public class ChooseAreaFragment extends Fragment {
         listView.setAdapter(adapter);
         return view;
     }
-
     public void onActivityCreated(Bundle savadInstanceState) {//这个方法没有完全的理解
         super.onActivityCreated(savadInstanceState);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,25 +105,18 @@ public class ChooseAreaFragment extends Fragment {
     //查询市
     public void queryCities(){
         titleTest.setText(selectedProvinced.getProvinceName());
-        Log.d("问题在哪啊","我服了121");
         buttonBack.setVisibility(View.VISIBLE);
-//        Log.d("问题在哪啊","我服了121");
         cityList = DataSupport.where("provinceid = ?", String.valueOf(selectedProvinced.getId())).find(City.class);
-        Log.d("问题在哪啊", String.valueOf(cityList.size()));
         if(cityList.size() >0 ){
             datalist.clear();
-            Log.d("数据没有查询","我说呢");
-
             for(City city:cityList){
                 datalist.add(city.getCityName());
             }
             adapter.notifyDataSetChanged();
-            listView.setSelection(0);
+            listView.setSelection(0);//似乎没什么作用，也可能是不起作用
             currentlevel = LEVEL_CITY;
-//            Log.d("问题在哪啊","我服了121");
         }else{
             //去申请数据去和风天气查询
-            Log.d("问题在哪啊","我服了");
             int provinceCode = selectedProvinced.getProvinceCode();
             String address = "http://guolin.tech/api/china/"+provinceCode;
             queryFromServer(address,"city");
@@ -141,8 +133,8 @@ public class ChooseAreaFragment extends Fragment {
             for(County county :countyList){
                 datalist.add(county.getCountyName());
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
+            adapter.notifyDataSetChanged();//数据刷新
+            listView.setSelection(0);//似乎没什么作用，也可能是不起作用
             currentlevel = LEVEL_COUNT;
         }else{
             //去数据库查询
@@ -161,13 +153,10 @@ public class ChooseAreaFragment extends Fragment {
                 String onResponsetext = response.body().string();//这里不明白是什么意思
                 boolean result = false;
                 if("province".equals(type)){
-//                    Log.d("MainActivity","省份查询");
                     result = Utility.handleProvinceResponse(onResponsetext);
                 }else if("city".equals(type)) {
-//                    Log.d("MainActivity","市区查询");
                     result = Utility.handleCityResponse(onResponsetext,selectedProvinced.getId());
                 }else if("county".equals(type)){
-//                    Log.d("MainActivity","县查询");
                     result = Utility.handleCountyResponse(onResponsetext,selectedCity.getId());
                 }
                 if(result){
@@ -187,7 +176,6 @@ public class ChooseAreaFragment extends Fragment {
                     });
                 }
             }
-
             @Override
             public void onFailure(Call call, IOException e) {
                 getActivity().runOnUiThread(new Runnable() {
@@ -204,7 +192,8 @@ public class ChooseAreaFragment extends Fragment {
         if(progressDialog == null){
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("正在加载...");
-            progressDialog.setCanceledOnTouchOutside(false);//这里为什么设置这个来着 我给忘了
+            progressDialog.setCanceledOnTouchOutside(true);//这里为什么设置这个来着 我给忘了
+            //可能的解释 点击外部位置无法取消这个加载的dialog
         }
         progressDialog.show();
     }

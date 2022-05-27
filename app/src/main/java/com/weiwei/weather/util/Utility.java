@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utility {
-    //解析省级数据
+    //解析和处理服务器返回的省级数据
     public static boolean handleProvinceResponse(String response){
         if(!TextUtils.isEmpty(response)){
             try {
@@ -23,12 +23,13 @@ public class Utility {
                     province.setProvinceCode(jsonObject.getInt("id"));
                     province.save();//保存数据
                 }
-                return true;
+                return true;//这里又返回true 为什么？
+                //因为进入了for循环获取到了服务器返回的数据
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return false;//这里为什么需要返回false
+        return false;//这里为什么需要返回false 没有进入for循环说明没有获取到返回的数据
     }
     //解析市级数据
     public static boolean handleCityResponse(String response,int provinceId){
@@ -52,7 +53,6 @@ public class Utility {
     }
     public static boolean handleCountyResponse(String response,int cityId){
         if(!TextUtils.isEmpty(response)){
-
             try {
                 JSONArray jsonArray = new JSONArray(response);
                 for(int i = 0; i < jsonArray.length(); i++){
