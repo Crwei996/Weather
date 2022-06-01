@@ -1,6 +1,11 @@
 package com.weiwei.weather.util;
 
+import com.google.gson.Gson;
 import com.weiwei.weather.R;
+import com.weiwei.weather.gson.Weather;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
