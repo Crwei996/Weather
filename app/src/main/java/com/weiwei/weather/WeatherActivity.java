@@ -5,6 +5,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.weiwei.weather.gson.Forecast;
 import com.weiwei.weather.gson.Weather;
+import com.weiwei.weather.service.AutoUpdateService;
 import com.weiwei.weather.util.HttpUtil;
 import com.weiwei.weather.util.Utility;
 
@@ -181,6 +183,8 @@ public class WeatherActivity extends AppCompatActivity {
         sportText.setText(sport);
         comfortText.setText(comfort);
         weatherLayout.setVisibility(View.VISIBLE);//为什么啊？
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);//启动后台服务的功能
     }
     private void loadBingPic(){
         String requestBingPic = "http://guolin.tech/api/bing_pic";
